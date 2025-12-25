@@ -2,8 +2,13 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Calculadora PRO de Precificação</title>
+  <title>Calculadora Pro Marketplace</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PWA: manifest e cor da barra -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff4500">
+
   <style>
     :root { --primary: #ff4500; --bg: #f0f2f5; }
     body {
@@ -20,7 +25,7 @@
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
       width: 100%;
-      max-width: 520px;
+      max-width: 480px;
     }
     h2 {
       text-align: center;
@@ -57,19 +62,13 @@
     }
     button:active { opacity: 0.9; }
 
-    .market-group { 
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
+    .market-group { display: flex; gap: 10px; margin-top: 8px; }
     .market-option {
+      flex: 1;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 5px;
+      gap: 8px;
+      padding: 10px;
       border: 2px solid #eee;
       border-radius: 10px;
       cursor: pointer;
@@ -77,14 +76,13 @@
       background: #fff;
     }
     .market-option img {
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
       object-fit: contain;
     }
     .market-option span {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       font-weight: 500;
-      text-align: center;
     }
     .market-option.active {
       border-color: var(--primary);
@@ -95,7 +93,6 @@
       display: flex;
       gap: 15px;
       margin-top: 8px;
-      flex-wrap: wrap;
     }
     .radio-group label {
       margin-top: 0;
@@ -103,7 +100,6 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      font-size: 0.85rem;
     }
     .tag-tax {
       font-size: 0.75rem;
@@ -134,41 +130,44 @@
       margin-top: 8px;
     }
     #login-screen { text-align: center; }
-    .obs-tiktok { font-size: 0.75rem; color:#777; margin-top:4px; }
   </style>
+
+  <!-- PWA: registro do service worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js')
+          .then(function () {
+            console.log('Service Worker registrado com sucesso');
+          })
+          .catch(function (err) {
+            console.log('Erro ao registrar Service Worker:', err);
+          });
+      });
+    }
+  </script>
 </head>
 <body>
 
 <div class="box" id="login-screen">
-  <h2>Acesso Exclusivo</h2>
-  <p style="font-size:0.9rem;color:#555;">
-    Esta calculadora é uma ferramenta exclusiva para alunos/clientes. 
-    Insira a senha fornecida na área de membros para acessar.
-  </p>
-  <input type="password" id="senhaInput" placeholder="Senha" onkeypress="handleKeyPress(event)">
+  <h2>Acesso Restrito</h2>
+  <p>Digite a senha de acesso:</p>
+  <input type="password" id="senhaInput" placeholder="Senha">
   <button onclick="verificarSenha()">Entrar</button>
 </div>
 
 <div class="box" id="app-screen" style="display:none;">
-  <h2>Calculadora PRO de Precificação para Marketplaces</h2>
-  <p style="font-size:0.85rem;color:#555;margin-top:4px;margin-bottom:10px;">
-    Ferramenta exclusiva para lojistas que vendem na <strong>Shopee</strong>, <strong>Mercado Livre</strong> e <strong>TikTok Shop</strong>. 
-    Preencha os campos abaixo para simular o preço ideal de venda com base nas taxas, impostos e margem de lucro desejada.
-  </p>
-
+  <h2>Calculadora Pro Marketplace</h2>
+  
   <label>Selecione o Marketplace</label>
   <div class="market-group">
     <div class="market-option active" id="btn-shopee" onclick="selecionarMarketplace('shopee')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/240px-Shopee_logo.svg.png" alt="Shopee">
+      <img src="https://i.ibb.co/HpGxgVv/shopee-logo.png" alt="Shopee">
       <span>Shopee</span>
     </div>
     <div class="market-option" id="btn-ml" onclick="selecionarMarketplace('ml')">
       <img src="https://logospng.org/download/mercado-livre/logo-mercado-livre-4096.png" alt="ML">
       <span>Mercado Livre</span>
-    </div>
-    <div class="market-option" id="btn-tiktok" onclick="selecionarMarketplace('tiktok')">
-      <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok Shop">
-      <span>TikTok Shop</span>
     </div>
   </div>
   <input type="hidden" id="mkt" value="shopee">
@@ -176,10 +175,10 @@
   <div id="opcoes-shopee">
     <label>Tipo de conta Shopee</label>
     <div class="radio-group">
-      <label><input type="radio" name="tipoShopee" value="cnpj" checked onchange="atualizarImpostoShopee()"> CNPJ</label>
-      <label><input type="radio" name="tipoShopee" value="cpf" onchange="atualizarImpostoShopee()"> CPF</label>
+      <label><input type="radio" name="tipoShopee" value="cnpj" checked> CNPJ</label>
+      <label><input type="radio" name="tipoShopee" value="cpf"> CPF</label>
     </div>
-    <div class="tag-tax">Taxas aprox.: CNPJ ~20% | CPF ~21% (Frete Grátis)</div>
+    <div class="tag-tax">Taxas aproximadas: CNPJ ~20% | CPF ~21% (Frete Grátis)</div>
   </div>
 
   <div id="opcoes-ml" style="display:none;">
@@ -188,35 +187,20 @@
       <label><input type="radio" name="tipoML" value="classico" checked> Clássico</label>
       <label><input type="radio" name="tipoML" value="premium"> Premium</label>
     </div>
-    <div class="tag-tax">Taxas aprox.: Clássico ~13% | Premium ~18%</div>
-
-    <label style="margin-top:10px;">Tipo de conta Mercado Livre</label>
-    <div class="radio-group">
-      <label><input type="radio" name="tipoContaML" value="cnpj" checked onchange="atualizarImpostoML()"> CNPJ</label>
-      <label><input type="radio" name="tipoContaML" value="cpf" onchange="atualizarImpostoML()"> CPF</label>
-    </div>
-
-    <p class="obs-tiktok">Obs.: Vendas a partir de <strong>R$ 79,90</strong> no Mercado Livre normalmente têm frete grátis para o cliente. <br>Confira sempre o valor real do frete dentro do próprio anúncio no Mercado Livre.</p>
-  </div>
-
-  <div id="opcoes-tiktok" style="display:none;">
-    <label>Configuração TikTok Shop</label>
-    <div class="tag-tax">Taxa principal: <strong>6%</strong> sobre o valor do produto.</div>
-    <div class="tag-tax">Taxa fixa extra: <strong>R$ 2,00 por item</strong> se o preço de venda for <strong>menor que R$ 79,00</strong>.</div>
-    <p class="obs-tiktok">Obs.: A taxa fixa é somada como custo por unidade no cálculo abaixo de R$ 79.</p>
+    <div class="tag-tax">Taxas aproximadas: Clássico ~13% | Premium ~18%</div>
   </div>
 
   <label>Custo do Produto (R$)</label>
-  <input type="number" id="custo" placeholder="0,00" step="0.01">
+  <input type="number" id="custo" placeholder="0,00">
 
   <label>Frete / Coleta (R$)</label>
-  <input type="number" id="frete" value="0" step="0.01">
+  <input type="number" id="frete" value="0">
 
   <label>Seu Imposto (%)</label>
-  <input type="number" id="imposto" value="6" step="0.1">
+  <input type="number" id="imposto" value="6">
 
   <label>Margem de Lucro Desejada (%)</label>
-  <input type="number" id="lucro" value="30" step="0.1">
+  <input type="number" id="lucro" value="30">
 
   <button onclick="calcular()">CALCULAR PREÇOS</button>
 
@@ -225,18 +209,10 @@
 
 <script>
   const SENHA_MESTRE = "123456"; 
-
   const TAXAS = {
     shopee: { cnpj: 20, cpf: 21 },
-    ml: { classico: 13, premium: 18 },
-    tiktok: { comissao: 6, taxa_fixa: 2, limite_taxa_fixa: 79 }
+    ml: { classico: 13, premium: 18 }
   };
-
-  function handleKeyPress(event) {
-    if (event.key === 'Enter') {
-      verificarSenha();
-    }
-  }
 
   function verificarSenha() {
     const input = document.getElementById('senhaInput').value;
@@ -252,121 +228,57 @@
     document.getElementById('mkt').value = market;
     document.getElementById('btn-shopee').classList.remove('active');
     document.getElementById('btn-ml').classList.remove('active');
-    document.getElementById('btn-tiktok').classList.remove('active');
     document.getElementById('btn-' + market).classList.add('active');
 
     if (market === 'shopee') {
       document.getElementById('opcoes-shopee').style.display = 'block';
       document.getElementById('opcoes-ml').style.display = 'none';
-      document.getElementById('opcoes-tiktok').style.display = 'none';
-      atualizarImpostoShopee();
-    } else if (market === 'ml') {
+    } else {
       document.getElementById('opcoes-shopee').style.display = 'none';
       document.getElementById('opcoes-ml').style.display = 'block';
-      document.getElementById('opcoes-tiktok').style.display = 'none';
-      atualizarImpostoML();
-    } else if (market === 'tiktok') {
-      document.getElementById('opcoes-shopee').style.display = 'none';
-      document.getElementById('opcoes-ml').style.display = 'none';
-      document.getElementById('opcoes-tiktok').style.display = 'block';
-      const impostoInput = document.getElementById('imposto');
-      impostoInput.disabled = false;
-    }
-  }
-
-  function atualizarImpostoShopee() {
-    const tipo = document.querySelector('input[name="tipoShopee"]:checked');
-    const impostoInput = document.getElementById('imposto');
-    if (tipo && tipo.value === 'cpf') {
-      impostoInput.value = 0;
-      impostoInput.disabled = true;
-    } else {
-      impostoInput.disabled = false;
-    }
-  }
-
-  function atualizarImpostoML() {
-    const conta = document.querySelector('input[name="tipoContaML"]:checked');
-    const impostoInput = document.getElementById('imposto');
-    if (document.getElementById('mkt').value === 'ml' && conta && conta.value === 'cpf') {
-      impostoInput.value = 0;
-      impostoInput.disabled = true;
-    } else {
-      impostoInput.disabled = false;
     }
   }
 
   function calcular() {
     const mkt = document.getElementById('mkt').value;
-    const custoBase = parseFloat(document.getElementById('custo').value) || 0;
+    const custo = parseFloat(document.getElementById('custo').value) || 0;
     const frete = parseFloat(document.getElementById('frete').value) || 0;
-    let impostoPerc = (parseFloat(document.getElementById('imposto').value) || 0) / 100;
+    const impostoPerc = (parseFloat(document.getElementById('imposto').value) || 0) / 100;
     const lucroPerc = (parseFloat(document.getElementById('lucro').value) || 0) / 100;
 
-    if (custoBase <= 0) {
+    if (custo <= 0) {
       alert("Informe o custo do produto.");
       return;
     }
 
-    let taxaMktPercent = 0;
-    let taxaFixaTikTok = 0;
-
+    let taxaMktPercent;
     if (mkt === 'shopee') {
       const tipo = document.querySelector('input[name="tipoShopee"]:checked').value;
       taxaMktPercent = TAXAS.shopee[tipo];
-      if (tipo === 'cpf') {
-        impostoPerc = 0;
-      }
-    } else if (mkt === 'ml') {
+    } else {
       const tipo = document.querySelector('input[name="tipoML"]:checked').value;
       taxaMktPercent = TAXAS.ml[tipo];
-
-      const conta = document.querySelector('input[name="tipoContaML"]:checked');
-      if (conta && conta.value === 'cpf') {
-        impostoPerc = 0;
-      }
-    } else if (mkt === 'tiktok') {
-      taxaMktPercent = TAXAS.tiktok.comissao;
     }
 
     const taxaMkt = taxaMktPercent / 100;
+    const divisor = 1 - (taxaMkt + impostoPerc + lucroPerc);
 
-    if (taxaMkt + impostoPerc + lucroPerc >= 1) {
+    if (divisor <= 0) {
       alert("Soma de taxa + imposto + lucro >= 100%. Reduza os percentuais.");
       return;
     }
 
-    let custoTotalInicial = custoBase + frete;
-    let precoBaseSemFixa = custoTotalInicial / (1 - (taxaMkt + impostoPerc + lucroPerc));
-
-    let custoBaseFinal = custoBase;
-    let infoTaxaFixa = "";
-
-    if (mkt === 'tiktok') {
-      if (precoBaseSemFixa < TAXAS.tiktok.limite_taxa_fixa) {
-        taxaFixaTikTok = TAXAS.tiktok.taxa_fixa;
-        custoBaseFinal = custoBase + taxaFixaTikTok;
-        infoTaxaFixa = `(+ R$ ${taxaFixaTikTok.toFixed(2)} de taxa fixa TikTok por unidade)`;
-      }
-    }
-
-    const custoTotal = custoBaseFinal + frete;
-    const precoBase = custoTotal / (1 - (taxaMkt + impostoPerc + lucroPerc));
+    const custoTotal = custo + frete;
+    const precoBase = custoTotal / divisor;
     const precoPromo = precoBase * 1.20;
-
-    const valorTaxaMkt = precoBase * taxaMkt;
-    const valorImposto = precoBase * impostoPerc;
-    const valorLucro = precoBase * lucroPerc;
 
     const resDiv = document.getElementById('resultado');
     resDiv.style.display = 'block';
     resDiv.innerHTML = `
-      <div class="res-item"><strong>Custo Produto:</strong> <span>R$ ${custoBaseFinal.toFixed(2)} ${infoTaxaFixa}</span></div>
-      <div class="res-item"><strong>Frete / Coleta:</strong> <span>R$ ${frete.toFixed(2)}</span></div>
       <div class="res-item"><strong>Custo Total:</strong> <span>R$ ${custoTotal.toFixed(2)}</span></div>
-      <div class="res-item"><strong>Taxa Marketplace (${taxaMktPercent}%):</strong> <span>R$ ${valorTaxaMkt.toFixed(2)}</span></div>
-      <div class="res-item"><strong>Impostos:</strong> <span>R$ ${valorImposto.toFixed(2)}</span></div>
-      <div class="res-item"><strong>Lucro:</strong> <span>R$ ${valorLucro.toFixed(2)}</span></div>
+      <div class="res-item"><strong>Taxa Marketplace (${taxaMktPercent}%):</strong> <span>R$ ${(precoBase * taxaMkt).toFixed(2)}</span></div>
+      <div class="res-item"><strong>Impostos:</strong> <span>R$ ${(precoBase * impostoPerc).toFixed(2)}</span></div>
+      <div class="res-item"><strong>Lucro:</strong> <span>R$ ${(precoBase * lucroPerc).toFixed(2)}</span></div>
       <div class="total"><span>Preço de Venda Ideal:</span> <span>R$ ${precoBase.toFixed(2)}</span></div>
       <hr style="border:none;border-top:1px dashed #ddd;margin:10px 0;">
       <div class="total" style="color:#27ae60;"><span>Preço p/ Promo (+20%):</span> <span>R$ ${precoPromo.toFixed(2)}</span></div>
@@ -375,7 +287,6 @@
   }
 
   selecionarMarketplace('shopee');
-  atualizarImpostoShopee();
 </script>
 
 </body>
