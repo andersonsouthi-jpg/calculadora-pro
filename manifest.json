@@ -1,0 +1,17 @@
+{
+  "name": "Calculadora PRO de Precificação",
+  "short_name": "Calc PRO",
+  "description": "Calculadora de precificação para Shopee, Mercado Livre e TikTok Shop.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f0f2f5",
+  "theme_color": "#ff4500",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/HpGxgVv/shopee-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
