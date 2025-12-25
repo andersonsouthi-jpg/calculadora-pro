@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Calculadora Pro Marketplace</title>
+  <title>Calculadora PRO de Precificação</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root { --primary: #ff4500; --bg: #f0f2f5; }
@@ -140,14 +140,21 @@
 <body>
 
 <div class="box" id="login-screen">
-  <h2>Acesso Restrito</h2>
-  <p>Digite a senha de acesso:</p>
-  <input type="password" id="senhaInput" placeholder="Senha">
+  <h2>Acesso Exclusivo</h2>
+  <p style="font-size:0.9rem;color:#555;">
+    Esta calculadora é uma ferramenta exclusiva para alunos/clientes. 
+    Insira a senha fornecida na área de membros para acessar.
+  </p>
+  <input type="password" id="senhaInput" placeholder="Senha" onkeypress="handleKeyPress(event)">
   <button onclick="verificarSenha()">Entrar</button>
 </div>
 
 <div class="box" id="app-screen" style="display:none;">
-  <h2>Calculadora Pro Marketplace</h2>
+  <h2>Calculadora PRO de Precificação para Marketplaces</h2>
+  <p style="font-size:0.85rem;color:#555;margin-top:4px;margin-bottom:10px;">
+    Ferramenta exclusiva para lojistas que vendem na <strong>Shopee</strong>, <strong>Mercado Livre</strong> e <strong>TikTok Shop</strong>. 
+    Preencha os campos abaixo para simular o preço ideal de venda com base nas taxas, impostos e margem de lucro desejada.
+  </p>
 
   <label>Selecione o Marketplace</label>
   <div class="market-group">
@@ -218,11 +225,18 @@
 
 <script>
   const SENHA_MESTRE = "123456"; 
+
   const TAXAS = {
     shopee: { cnpj: 20, cpf: 21 },
     ml: { classico: 13, premium: 18 },
     tiktok: { comissao: 6, taxa_fixa: 2, limite_taxa_fixa: 79 }
   };
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      verificarSenha();
+    }
+  }
 
   function verificarSenha() {
     const input = document.getElementById('senhaInput').value;
@@ -309,7 +323,7 @@
 
       const conta = document.querySelector('input[name="tipoContaML"]:checked');
       if (conta && conta.value === 'cpf') {
-        impostoPerc = 0; // CPF sem imposto na base de cálculo
+        impostoPerc = 0;
       }
     } else if (mkt === 'tiktok') {
       taxaMktPercent = TAXAS.tiktok.comissao;
