@@ -32,6 +32,14 @@
     h2 { text-align: center; color: #222; margin-bottom: 14px; font-size: 1.3rem; }
     p { font-size: 0.9rem; color: #555; }
 
+    .descricao {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
     label {
       display: block;
       margin-top: 14px;
@@ -92,7 +100,23 @@
     .radio-group { display: flex; gap: 15px; margin-top: 8px; flex-wrap: wrap; }
     .radio-group label { margin-top: 0; font-weight: normal; display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
 
-    .tag-tax { font-size: 0.75rem; color: #777; margin-top: 5px; }
+    .tag-tax { 
+      font-size: 0.75rem; 
+      color: #777; 
+      margin-top: 5px; 
+      line-height: 1.4;
+    }
+
+    .info-box {
+      background: #fffbf0;
+      border-left: 3px solid #ff9800;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: #555;
+      border-radius: 4px;
+      line-height: 1.5;
+    }
 
     .res {
       margin-top: 18px;
@@ -128,6 +152,7 @@
 </head>
 <body>
 
+  <!-- TELA DE LOGIN -->
   <div class="box" id="login-screen">
     <div class="brand-header">
       <img src="Design sem nome (6).png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
@@ -138,13 +163,18 @@
     <button id="btnEntrar">Entrar</button>
   </div>
 
+  <!-- APLICATIVO -->
   <div class="box" id="app-screen" style="display:none;">
     <div class="brand-header">
       <img src="Design sem nome (6).png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
     </div>
 
-    <h2>Calculadora PRO de Precificação</h2>
-    
+    <h2>Calculadora PRO de Precificação para Marketplaces</h2>
+    <p style="font-size:0.85rem;color:#555;margin-top:4px;margin-bottom:10px;">
+      Ferramenta exclusiva para lojistas que vendem na <strong>Shopee</strong>, <strong>Mercado Livre</strong> e <strong>TikTok Shop</strong>. 
+      Preencha os campos abaixo para simular o preço ideal de venda com base nas taxas, impostos e margem de lucro desejada.
+    </p>
+
     <label>Selecione o Marketplace</label>
     <div class="market-group">
       <div class="market-option active" id="btn-shopee" onclick="selecionarMarketplace('shopee')">
@@ -152,12 +182,12 @@
         <span>Shopee</span>
       </div>
       <div class="market-option" id="btn-ml" onclick="selecionarMarketplace('ml')">
-        <img src="https://logospng.org/download/mercado-livre/logo-mercado-livre-4096.png" alt="ML">
-        <span>M. Livre</span>
+        <img src="https://logospng.org/download/mercado-livre/logo-mercado-livre-4096.png" alt="Mercado Livre">
+        <span>Mercado Livre</span>
       </div>
       <div class="market-option" id="btn-tiktok" onclick="selecionarMarketplace('tiktok')">
-        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok">
-        <span>TikTok</span>
+        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok Shop">
+        <span>TikTok Shop</span>
       </div>
       <div class="market-option" id="btn-amazon" onclick="selecionarMarketplace('amazon')">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon">
@@ -166,31 +196,62 @@
     </div>
     <input type="hidden" id="mkt" value="shopee">
 
+    <!-- Shopee -->
     <div id="opcoes-shopee">
       <label>Tipo de conta Shopee</label>
       <div class="radio-group">
         <label><input type="radio" name="tipoShopee" value="cnpj" checked> CNPJ</label>
         <label><input type="radio" name="tipoShopee" value="cpf"> CPF</label>
       </div>
+      <div class="tag-tax">Taxas aprox.: CNPJ ~20% | CPF ~21% (Frete Grátis)</div>
     </div>
 
+    <!-- Mercado Livre -->
     <div id="opcoes-ml" style="display:none;">
       <label>Tipo de anúncio</label>
       <div class="radio-group">
         <label><input type="radio" name="tipoML" value="classico" checked> Clássico</label>
         <label><input type="radio" name="tipoML" value="premium"> Premium</label>
       </div>
+      <div class="tag-tax">Taxas aprox.: Clássico ~13% | Premium ~18%</div>
+      <div class="info-box">
+        <strong>Obs.:</strong> Vendas a partir de R$ 79,90 no Mercado Livre normalmente têm frete grátis para o cliente. 
+        Confira sempre o valor real do frete dentro do próprio anúncio no Mercado Livre.
+      </div>
     </div>
 
+    <!-- TikTok -->
     <div id="opcoes-tiktok" style="display:none;">
-      <div class="tag-tax">Taxa: 6% + R$ 2,00 (se < R$ 79)</div>
+      <div class="tag-tax" style="margin-bottom:8px;"><strong>Configuração TikTok Shop</strong></div>
+      <div class="info-box">
+        <strong>Taxa principal:</strong> 6% sobre o valor do produto.<br>
+        <strong>Taxa fixa extra:</strong> R$ 2,00 por item se o preço de venda for menor que R$ 79,00.<br>
+        <strong>Obs.:</strong> A taxa fixa é somada como custo por unidade no cálculo abaixo de R$ 79.
+      </div>
     </div>
 
+    <!-- Amazon -->
     <div id="opcoes-amazon" style="display:none;">
-      <label>Tarifa Logística (R$)</label>
-      <input type="number" id="amazon_logistica" value="0" step="0.01">
+      <label>Tipo de operação Amazon</label>
+      <div class="radio-group">
+        <label><input type="radio" name="tipoAmazon" value="fba" checked> FBA</label>
+        <label><input type="radio" name="tipoAmazon" value="dba"> DBA</label>
+      </div>
+
+      <label>Tarifa Logística Amazon (R$) por unidade</label>
+      <input type="number" id="amazon_logistica" value="4.00" step="0.01">
+
+      <div class="info-box">
+        <strong>Valores aproximados de tarifa logística (exemplo):</strong><br>
+        • Itens pequenos/leve: ~R$ 4,00 por unidade<br>
+        • Itens médios: ~R$ 7,00 por unidade<br>
+        • Itens grandes/pesados: ~R$ 12,00 ou mais por unidade<br><br>
+        <strong>FBA:</strong> Amazon cuida de armazenamento, embalagem e envio. Use os valores acima como base e ajuste conforme sua categoria real.<br>
+        <strong>DBA:</strong> Você envia do seu estoque (Fulfillment by Merchant). Use aqui o custo médio de frete + embalagem por unidade.
+      </div>
     </div>
 
+    <!-- Campos gerais -->
     <div id="campo-custo-global">
       <label>Custo do Produto (R$)</label>
       <input type="number" id="custo" placeholder="0,00" step="0.01">
@@ -213,12 +274,14 @@
       <span class="brand-footer-name">BIGVARE</span>
     </div>
 
+    <!-- Botão Sair -->
     <button class="btn-logout" id="btnSair">Sair</button>
   </div>
 
   <script>
     const SENHA_MESTRE = "123456"; 
 
+    // LOGIN
     function verificarSenha() {
       const input = document.getElementById('senhaInput').value;
       if (input === SENHA_MESTRE) {
@@ -241,6 +304,7 @@
       document.getElementById('senhaInput').value = '';
     }
 
+    // EVENTOS INICIAIS
     document.addEventListener('DOMContentLoaded', function () {
       if (localStorage.getItem('calculadoraProLogado') === 'true') {
         mostrarApp();
@@ -252,54 +316,132 @@
       const btnSair = document.getElementById('btnSair');
 
       if (senhaInput) {
-        senhaInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') verificarSenha(); });
+        senhaInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') verificarSenha();
+        });
       }
-      
+
       if (btnEntrar) btnEntrar.addEventListener('click', verificarSenha);
       if (btnCalcular) btnCalcular.addEventListener('click', calcular);
       if (btnSair) btnSair.addEventListener('click', logout);
     });
 
+    // SELEÇÃO DE MARKETPLACE
     function selecionarMarketplace(market) {
       document.getElementById('mkt').value = market;
+
       ['shopee','ml','tiktok','amazon'].forEach(m => {
-        document.getElementById('btn-' + m).classList.remove('active');
-        document.getElementById('opcoes-' + m).style.display = 'none';
+        const btn = document.getElementById('btn-' + m);
+        const op = document.getElementById('opcoes-' + m);
+        if (btn) btn.classList.remove('active');
+        if (op) op.style.display = 'none';
       });
-      document.getElementById('btn-' + market).classList.add('active');
-      document.getElementById('opcoes-' + market).style.display = 'block';
+
+      const btnAtivo = document.getElementById('btn-' + market);
+      const opAtivo = document.getElementById('opcoes-' + market);
+      if (btnAtivo) btnAtivo.classList.add('active');
+      if (opAtivo) opAtivo.style.display = 'block';
     }
 
+    // CÁLCULO DETALHADO
     function calcular() {
       const mkt = document.getElementById('mkt').value;
-      const custo = parseFloat(document.getElementById('custo').value) || 0;
+      const custoBase = parseFloat(document.getElementById('custo').value) || 0;
       const frete = parseFloat(document.getElementById('frete').value) || 0;
-      let imposto = (parseFloat(document.getElementById('imposto').value) || 0) / 100;
-      const lucro = (parseFloat(document.getElementById('lucro').value) || 0) / 100;
+      let impostoPercent = (parseFloat(document.getElementById('imposto').value) || 0);
+      const lucroPercent = (parseFloat(document.getElementById('lucro').value) || 0);
 
-      if (custo <= 0) { alert("Informe o custo."); return; }
-
-      let taxaMkt = 0;
-      if(mkt === 'shopee') {
-        const tipo = document.querySelector('input[name="tipoShopee"]:checked').value;
-        taxaMkt = (tipo === 'cnpj') ? 0.20 : 0.21;
-        if(tipo === 'cpf') imposto = 0;
-      } else if(mkt === 'ml') {
-        taxaMkt = document.querySelector('input[name="tipoML"]:checked').value === 'classico' ? 0.13 : 0.18;
-      } else if(mkt === 'tiktok') {
-        taxaMkt = 0.06;
-      } else if(mkt === 'amazon') {
-        taxaMkt = 0.13;
+      if (custoBase <= 0) {
+        alert("Informe o custo do produto.");
+        return;
       }
 
-      const preco = (custo + frete) / (1 - (taxaMkt + imposto + lucro));
-      const precoPromo = preco * 1.20;
+      // Custo logístico Amazon (FBA/DBA)
+      let custoLogisticoAmazon = 0;
+      let tipoAmazonSelecionado = "";
+      if (mkt === 'amazon') {
+        custoLogisticoAmazon = parseFloat(document.getElementById('amazon_logistica').value) || 0;
+        const radioAmazon = document.querySelector('input[name="tipoAmazon"]:checked');
+        tipoAmazonSelecionado = radioAmazon ? radioAmazon.value : "fba";
+      }
+
+      // Taxa marketplace
+      let taxaMktPercent = 0;
+      let descricaoMkt = "";
+
+      if (mkt === 'shopee') {
+        const tipo = document.querySelector('input[name="tipoShopee"]:checked').value;
+        taxaMktPercent = (tipo === 'cnpj') ? 20 : 21;
+        descricaoMkt = `Shopee ${tipo.toUpperCase()}`;
+        if (tipo === 'cpf') impostoPercent = 0;
+      } else if (mkt === 'ml') {
+        const tipoML = document.querySelector('input[name="tipoML"]:checked').value;
+        taxaMktPercent = (tipoML === 'classico') ? 13 : 18;
+        descricaoMkt = `Mercado Livre ${tipoML === 'classico' ? 'Clássico' : 'Premium'}`;
+      } else if (mkt === 'tiktok') {
+        taxaMktPercent = 6;
+        descricaoMkt = "TikTok Shop";
+      } else if (mkt === 'amazon') {
+        taxaMktPercent = 13; // taxa média estimada Amazon
+        descricaoMkt = tipoAmazonSelecionado === 'fba'
+          ? "Amazon FBA (comissão da plataforma)"
+          : "Amazon DBA (comissão da plataforma)";
+      }
+
+      // Custo total base (produto + frete + logística Amazon se for o caso)
+      const custoTotal = custoBase + frete + custoLogisticoAmazon;
+
+      const taxaMktValor = custoTotal * (taxaMktPercent / 100);
+      const impostoValor = custoTotal * (impostoPercent / 100);
+      const lucroValor = custoTotal * (lucroPercent / 100);
+
+      const precoIdeal = custoTotal + taxaMktValor + impostoValor + lucroValor;
+      const precoPromo = precoIdeal * 1.20;
 
       const res = document.getElementById('resultado');
       res.style.display = 'block';
       res.innerHTML = `
-        <div class="res-item"><strong>Preço Ideal:</strong> <span>R$ ${preco.toFixed(2)}</span></div>
-        <div class="total" style="color:#2ecc71;"><span>Preço p/ Promo (+20%):</span> <span>R$ ${precoPromo.toFixed(2)}</span></div>
+        <div class="res-item">
+          <strong>Custo Produto:</strong>
+          <span>R$ ${custoBase.toFixed(2)}</span>
+        </div>
+        <div class="res-item">
+          <strong>Frete / Coleta:</strong>
+          <span>R$ ${frete.toFixed(2)}</span>
+        </div>
+        ${mkt === 'amazon' ? `
+          <div class="res-item">
+            <strong>Logística Amazon (${tipoAmazonSelecionado.toUpperCase()}):</strong>
+            <span>R$ ${custoLogisticoAmazon.toFixed(2)}</span>
+          </div>
+        ` : ''}
+        <div class="res-item">
+          <strong>Custo Total:</strong>
+          <span>R$ ${custoTotal.toFixed(2)}</span>
+        </div>
+        <div class="res-item">
+          <strong>Taxa Marketplace (${taxaMktPercent}% - ${descricaoMkt})</strong>
+          <span>R$ ${taxaMktValor.toFixed(2)}</span>
+        </div>
+        <div class="res-item">
+          <strong>Impostos (${impostoPercent}%):</strong>
+          <span>R$ ${impostoValor.toFixed(2)}</span>
+        </div>
+        <div class="res-item">
+          <strong>Lucro (${lucroPercent}%):</strong>
+          <span>R$ ${lucroValor.toFixed(2)}</span>
+        </div>
+        <div class="res-item total">
+          <span>Preço de Venda Ideal:</span>
+          <span>R$ ${precoIdeal.toFixed(2)}</span>
+        </div>
+        <div class="total" style="color:#2ecc71;">
+          <span>Preço p/ Promo (+20%):</span>
+          <span>R$ ${precoPromo.toFixed(2)}</span>
+        </div>
+        <p style="margin-top:8px;font-size:0.8rem;color:#666;">
+          Use o preço de promoção como valor cheio para poder dar descontos em campanhas.
+        </p>
       `;
     }
   </script>
