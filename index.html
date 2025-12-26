@@ -29,13 +29,7 @@
       border: 1px solid #e0e0e0;
     }
 
-    h2 {
-      text-align: center;
-      color: #222;
-      margin-bottom: 14px;
-      font-size: 1.3rem;
-    }
-
+    h2 { text-align: center; color: #222; margin-bottom: 14px; font-size: 1.3rem; }
     p { font-size: 0.9rem; color: #555; }
 
     label {
@@ -55,10 +49,6 @@
       box-sizing: border-box;
       background: #ffffff;
       color: #222;
-    }
-
-    input::placeholder {
-      color: #999;
     }
 
     button {
@@ -95,43 +85,14 @@
       transition: 0.2s;
       background: #fafafa;
     }
-    .market-option img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-    }
-    .market-option span {
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-align: center;
-      color: #333;
-    }
-    .market-option.active {
-      border-color: #ff4500;
-      background: #ffe9dd;
-    }
+    .market-option img { width: 32px; height: 32px; object-fit: contain; }
+    .market-option span { font-size: 0.7rem; font-weight: 500; text-align: center; color: #333; }
+    .market-option.active { border-color: #ff4500; background: #ffe9dd; }
 
-    .radio-group {
-      display: flex;
-      gap: 15px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-    .radio-group label {
-      margin-top: 0;
-      font-weight: normal;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.85rem;
-      color: #444;
-    }
+    .radio-group { display: flex; gap: 15px; margin-top: 8px; flex-wrap: wrap; }
+    .radio-group label { margin-top: 0; font-weight: normal; display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
 
-    .tag-tax {
-      font-size: 0.75rem;
-      color: #777;
-      margin-top: 5px;
-    }
+    .tag-tax { font-size: 0.75rem; color: #777; margin-top: 5px; }
 
     .res {
       margin-top: 18px;
@@ -141,86 +102,49 @@
       display: none;
       border: 1px solid #e0e0e0;
     }
-    .res-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-      color: #333;
-    }
-    .total {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #ff8a3c;
-      border-top: 1px solid #ddd;
-      padding-top: 8px;
-      margin-top: 8px;
-    }
+    .res-item { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; }
+    .total { font-size: 1rem; font-weight: bold; color: #ff8a3c; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
 
     #login-screen { text-align: center; }
 
-    .obs-tiktok { font-size: 0.75rem; color:#777; margin-top:4px; }
+    .brand-header { display: flex; justify-content: center; margin-bottom: 12px; }
+    .brand-logo { width: 70px; height: 70px; border-radius: 16px; object-fit: cover; background: #000; }
 
-    .brand-header {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
+    .brand-footer { margin-top: 16px; text-align: center; font-size: 0.75rem; color: #777; }
+    .brand-footer-name { font-weight: 700; color: #ffffff; background: #e32c2c; padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
 
-    .brand-logo {
-      width: 70px;
-      height: 70px;
-      border-radius: 16px;
-      object-fit: cover;
-      background: #000;
-    }
-
-    .brand-footer {
-      margin-top: 16px;
-      text-align: center;
+    .btn-logout {
+      background: #999;
+      padding: 8px;
       font-size: 0.75rem;
-      color: #777;
-    }
-
-    .brand-footer-name {
-      font-weight: 700;
-      color: #ffffff;
-      background: #e32c2c;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 4px;
+      margin-top: 20px;
+      opacity: 0.7;
+      width: auto;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
 <body>
 
-  <!-- TELA DE LOGIN -->
   <div class="box" id="login-screen">
+    <div class="brand-header">
+      <img src="Design sem nome (6).png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
+    </div>
     <h2>Acesso Exclusivo</h2>
-    <p>
-      Esta calculadora é uma ferramenta exclusiva para alunos/clientes. 
-      Insira a senha fornecida na área de membros para acessar.
-    </p>
-    <!-- SEM onkeypress aqui -->
+    <p>Insira a senha para acessar a calculadora.</p>
     <input type="password" id="senhaInput" placeholder="Senha">
     <button id="btnEntrar">Entrar</button>
   </div>
 
-  <!-- APLICATIVO -->
   <div class="box" id="app-screen" style="display:none;">
-
-    <!-- LOGO -->
     <div class="brand-header">
-      <img src="Design sem nome (6).png" alt="Logo" class="brand-logo"
-           onerror="this.style.display='none';">
+      <img src="Design sem nome (6).png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
     </div>
 
-    <h2>Calculadora PRO de Precificação para Marketplaces</h2>
-    <p>
-      Simule o preço ideal de venda na <strong>Shopee</strong>, <strong>Mercado Livre</strong>, 
-      <strong>TikTok Shop</strong> e <strong>Amazon</strong>, considerando taxas, impostos e lucro.
-    </p>
-
+    <h2>Calculadora PRO de Precificação</h2>
+    
     <label>Selecione o Marketplace</label>
     <div class="market-group">
       <div class="market-option active" id="btn-shopee" onclick="selecionarMarketplace('shopee')">
@@ -229,11 +153,11 @@
       </div>
       <div class="market-option" id="btn-ml" onclick="selecionarMarketplace('ml')">
         <img src="https://logospng.org/download/mercado-livre/logo-mercado-livre-4096.png" alt="ML">
-        <span>Mercado Livre</span>
+        <span>M. Livre</span>
       </div>
       <div class="market-option" id="btn-tiktok" onclick="selecionarMarketplace('tiktok')">
-        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok Shop">
-        <span>TikTok Shop</span>
+        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok">
+        <span>TikTok</span>
       </div>
       <div class="market-option" id="btn-amazon" onclick="selecionarMarketplace('amazon')">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon">
@@ -242,55 +166,31 @@
     </div>
     <input type="hidden" id="mkt" value="shopee">
 
-    <!-- SHOPEE -->
     <div id="opcoes-shopee">
       <label>Tipo de conta Shopee</label>
       <div class="radio-group">
         <label><input type="radio" name="tipoShopee" value="cnpj" checked> CNPJ</label>
         <label><input type="radio" name="tipoShopee" value="cpf"> CPF</label>
       </div>
-      <div class="tag-tax">Taxas aprox.: CNPJ ~20% | CPF ~21% (Frete Grátis)</div>
     </div>
 
-    <!-- MERCADO LIVRE -->
     <div id="opcoes-ml" style="display:none;">
-      <label>Tipo de anúncio Mercado Livre</label>
+      <label>Tipo de anúncio</label>
       <div class="radio-group">
         <label><input type="radio" name="tipoML" value="classico" checked> Clássico</label>
         <label><input type="radio" name="tipoML" value="premium"> Premium</label>
       </div>
-      <div class="tag-tax">Taxas aprox.: Clássico ~13% | Premium ~18%</div>
     </div>
 
-    <!-- TIKTOK -->
     <div id="opcoes-tiktok" style="display:none;">
-      <label>Configuração TikTok Shop</label>
-      <div class="tag-tax">Taxa principal: <strong>6%</strong> sobre o valor do produto.</div>
-      <div class="tag-tax">Taxa fixa extra: <strong>R$ 2,00</strong> por item se o preço de venda for <strong>menor que R$ 79,00</strong>.</div>
-      <p class="obs-tiktok">A taxa fixa entra como custo adicional por unidade abaixo de R$ 79.</p>
+      <div class="tag-tax">Taxa: 6% + R$ 2,00 (se < R$ 79)</div>
     </div>
 
-    <!-- AMAZON -->
     <div id="opcoes-amazon" style="display:none;">
-      <label>Configuração Amazon</label>
-      <div class="radio-group">
-        <label><input type="radio" name="tipoAmazon" value="fba" checked> 
-          FBA (Entregue pela Amazon)
-        </label>
-        <label><input type="radio" name="tipoAmazon" value="dba"> 
-          DBA (Delivery by Amazon)
-        </label>
-      </div>
-
-      <div class="tag-tax">
-        Comissão média usada: <strong>13%</strong> (varia por categoria).
-      </div>
-
-      <label style="margin-top:10px;">Tarifa logística (R$) por unidade</label>
+      <label>Tarifa Logística (R$)</label>
       <input type="number" id="amazon_logistica" value="0" step="0.01">
     </div>
 
-    <!-- CUSTO DO PRODUTO GLOBAL -->
     <div id="campo-custo-global">
       <label>Custo do Produto (R$)</label>
       <input type="number" id="custo" placeholder="0,00" step="0.01">
@@ -302,135 +202,106 @@
     <label>Seu Imposto (%)</label>
     <input type="number" id="imposto" value="6" step="0.1">
 
-    <label>Margem de Lucro Desejada (%)</label>
+    <label>Margem de Lucro (%)</label>
     <input type="number" id="lucro" value="30" step="0.1">
 
     <button id="btnCalcular">CALCULAR PREÇOS</button>
-
     <div id="resultado" class="res"></div>
 
     <div class="brand-footer">
       <span>Produzido por</span>
       <span class="brand-footer-name">BIGVARE</span>
     </div>
+
+    <button class="btn-logout" id="btnSair">Sair</button>
   </div>
 
   <script>
     const SENHA_MESTRE = "123456"; 
 
-    const TAXAS = {
-      shopee: { cnpj: 20, cpf: 21 },
-      ml: { classico: 13, premium: 18 },
-      tiktok: { comissao: 6 },
-      amazon: { comissao: 13 }
-    };
-
     function verificarSenha() {
       const input = document.getElementById('senhaInput').value;
       if (input === SENHA_MESTRE) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app-screen').style.display = 'block';
+        localStorage.setItem('calculadoraProLogado', 'true');
+        mostrarApp();
       } else {
         alert("Senha incorreta!");
       }
     }
 
+    function mostrarApp() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+    }
+
+    function logout() {
+      localStorage.removeItem('calculadoraProLogado');
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'block';
+      document.getElementById('senhaInput').value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      if (localStorage.getItem('calculadoraProLogado') === 'true') {
+        mostrarApp();
+      }
+
+      const senhaInput = document.getElementById('senhaInput');
+      const btnEntrar = document.getElementById('btnEntrar');
+      const btnCalcular = document.getElementById('btnCalcular');
+      const btnSair = document.getElementById('btnSair');
+
+      if (senhaInput) {
+        senhaInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') verificarSenha(); });
+      }
+      
+      if (btnEntrar) btnEntrar.addEventListener('click', verificarSenha);
+      if (btnCalcular) btnCalcular.addEventListener('click', calcular);
+      if (btnSair) btnSair.addEventListener('click', logout);
+    });
+
     function selecionarMarketplace(market) {
       document.getElementById('mkt').value = market;
-
       ['shopee','ml','tiktok','amazon'].forEach(m => {
-        const btn = document.getElementById('btn-' + m);
-        const bloco = document.getElementById('opcoes-' + m);
-        if (btn) btn.classList.remove('active');
-        if (bloco) bloco.style.display = 'none';
+        document.getElementById('btn-' + m).classList.remove('active');
+        document.getElementById('opcoes-' + m).style.display = 'none';
       });
-
       document.getElementById('btn-' + market).classList.add('active');
-      const blocoSel = document.getElementById('opcoes-' + market);
-      if (blocoSel) blocoSel.style.display = 'block';
+      document.getElementById('opcoes-' + market).style.display = 'block';
     }
 
     function calcular() {
       const mkt = document.getElementById('mkt').value;
       const custo = parseFloat(document.getElementById('custo').value) || 0;
       const frete = parseFloat(document.getElementById('frete').value) || 0;
-      let impostoPerc = (parseFloat(document.getElementById('imposto').value) || 0) / 100;
-      const lucroPerc = (parseFloat(document.getElementById('lucro').value) || 0) / 100;
+      let imposto = (parseFloat(document.getElementById('imposto').value) || 0) / 100;
+      const lucro = (parseFloat(document.getElementById('lucro').value) || 0) / 100;
 
-      if (custo <= 0) {
-        alert("Informe o custo do produto.");
-        return;
-      }
+      if (custo <= 0) { alert("Informe o custo."); return; }
 
-      let taxaMktPercent = 0;
-
-      if (mkt === 'shopee') {
+      let taxaMkt = 0;
+      if(mkt === 'shopee') {
         const tipo = document.querySelector('input[name="tipoShopee"]:checked').value;
-        taxaMktPercent = TAXAS.shopee[tipo];
-        if (tipo === 'cpf') impostoPerc = 0;
-
-      } else if (mkt === 'ml') {
-        const tipoML = document.querySelector('input[name="tipoML"]:checked').value;
-        taxaMktPercent = TAXAS.ml[tipoML];
-
-      } else if (mkt === 'tiktok') {
-        taxaMktPercent = TAXAS.tiktok.comissao;
-
-      } else if (mkt === 'amazon') {
-        taxaMktPercent = TAXAS.amazon.comissao;
+        taxaMkt = (tipo === 'cnpj') ? 0.20 : 0.21;
+        if(tipo === 'cpf') imposto = 0;
+      } else if(mkt === 'ml') {
+        taxaMkt = document.querySelector('input[name="tipoML"]:checked').value === 'classico' ? 0.13 : 0.18;
+      } else if(mkt === 'tiktok') {
+        taxaMkt = 0.06;
+      } else if(mkt === 'amazon') {
+        taxaMkt = 0.13;
       }
 
-      const taxaMkt = taxaMktPercent / 100;
-      if (taxaMkt + impostoPerc + lucroPerc >= 1) {
-        alert("Soma de taxa + imposto + lucro >= 100%. Reduza os percentuais.");
-        return;
-      }
+      const preco = (custo + frete) / (1 - (taxaMkt + imposto + lucro));
+      const precoPromo = preco * 1.20;
 
-      const custoTotal = custo + frete;
-      const precoBase = custoTotal / (1 - (taxaMkt + impostoPerc + lucroPerc));
-      const precoPromo = precoBase * 1.20;
-
-      const valorTaxaMkt = precoBase * taxaMkt;
-      const valorImposto = precoBase * impostoPerc;
-      const valorLucro = precoBase * lucroPerc;
-
-      const resDiv = document.getElementById('resultado');
-      resDiv.style.display = 'block';
-      resDiv.innerHTML = `
-        <div class="res-item"><strong>Custo Produto:</strong> <span>R$ ${custo.toFixed(2)}</span></div>
-        <div class="res-item"><strong>Frete / Coleta:</strong> <span>R$ ${frete.toFixed(2)}</span></div>
-        <div class="res-item"><strong>Custo Total:</strong> <span>R$ ${custoTotal.toFixed(2)}</span></div>
-        <div class="res-item"><strong>Taxa Marketplace (${taxaMktPercent}%):</strong> <span>R$ ${valorTaxaMkt.toFixed(2)}</span></div>
-        <div class="res-item"><strong>Impostos:</strong> <span>R$ ${valorImposto.toFixed(2)}</span></div>
-        <div class="res-item"><strong>Lucro:</strong> <span>R$ ${valorLucro.toFixed(2)}</span></div>
-        <div class="total"><span>Preço de Venda Ideal:</span> <span>R$ ${precoBase.toFixed(2)}</span></div>
-        <hr style="border:none;border-top:1px dashed #ddd;margin:10px 0;">
+      const res = document.getElementById('resultado');
+      res.style.display = 'block';
+      res.innerHTML = `
+        <div class="res-item"><strong>Preço Ideal:</strong> <span>R$ ${preco.toFixed(2)}</span></div>
         <div class="total" style="color:#2ecc71;"><span>Preço p/ Promo (+20%):</span> <span>R$ ${precoPromo.toFixed(2)}</span></div>
       `;
     }
-
-    // >>> AQUI GARANTIMOS O ENTER E O BOTÃO FUNCIONANDO NO CODEPEN FULL PAGE <<<
-    document.addEventListener('DOMContentLoaded', function () {
-      const senhaInput = document.getElementById('senhaInput');
-      const btnEntrar = document.getElementById('btnEntrar');
-      const btnCalcular = document.getElementById('btnCalcular');
-
-      if (senhaInput) {
-        senhaInput.addEventListener('keydown', function (event) {
-          if (event.key === 'Enter') {
-            verificarSenha();
-          }
-        });
-      }
-
-      if (btnEntrar) {
-        btnEntrar.addEventListener('click', verificarSenha);
-      }
-
-      if (btnCalcular) {
-        btnCalcular.addEventListener('click', calcular);
-      }
-    });
   </script>
 </body>
 </html>
