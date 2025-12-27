@@ -118,6 +118,13 @@
       line-height: 1.5;
     }
 
+    .imposto-note {
+      font-size: 0.75rem;
+      color: #777;
+      margin-top: 4px;
+      display: none;
+    }
+
     .res {
       margin-top: 18px;
       padding: 15px;
@@ -208,6 +215,13 @@
 
     <!-- Mercado Livre -->
     <div id="opcoes-ml" style="display:none;">
+      <!-- Tipo de conta Mercado Livre -->
+      <label>Tipo de conta Mercado Livre</label>
+      <div class="radio-group">
+        <label><input type="radio" name="tipoMLConta" value="cnpj" checked> CNPJ</label>
+        <label><input type="radio" name="tipoMLConta" value="cpf"> CPF</label>
+      </div>
+
       <label>Tipo de anúncio</label>
       <div class="radio-group">
         <label><input type="radio" name="tipoML" value="classico" checked> Clássico</label>
@@ -262,6 +276,8 @@
 
     <label>Seu Imposto (%)</label>
     <input type="number" id="imposto" value="6" step="0.1">
+    <!-- AVISO DINÂMICO DO IMPOSTO -->
+    <div id="imposto-note" class="imposto-note"></div>
 
     <label>Margem de Lucro (%)</label>
     <input type="number" id="lucro" value="30" step="0.1">
@@ -281,6 +297,43 @@
   <script>
     const SENHA_MESTRE = "123456"; 
 
+    // Guardar imposto padrão p/ voltar quando sair de CPF
+    let impostoDefault = 6;
+
+    function aplicarRegraImpostoCPF() {
+      const impostoInput = document.getElementById('imposto');
+      const impostoNote = document.getElementById('imposto-note');
+      const tipoShopee = document.querySelector('input[name="tipoShopee"]:checked')?.value;
+      const tipoMLConta = document.querySelector('input[name="tipoMLConta"]:checked')?.value;
+      const mkt = document.getElementById('mkt').value;
+
+      // Reset visual
+      impostoNote.style.display = 'none';
+      impostoNote.textContent = '';
+
+      // Shopee CPF -> imposto 0 e travado
+      if (mkt === 'shopee' && tipoShopee === 'cpf') {
+        impostoInput.value = 0;
+        impostoInput.disabled = true;
+        impostoNote.style.display = 'block';
+        impostoNote.textContent = 'CPF Shopee: imposto definido como 0%. A plataforma já retém os impostos no repasse.';
+        return;
+      }
+
+      // Mercado Livre CPF -> imposto 0 e travado
+      if (mkt === 'ml' && tipoMLConta === 'cpf') {
+        impostoInput.value = 0;
+        impostoInput.disabled = true;
+        impostoNote.style.display = 'block';
+        impostoNote.textContent = 'CPF Mercado Livre: imposto definido como 0%. Impostos são recolhidos pela plataforma.';
+        return;
+      }
+
+      // Caso contrário, imposto volta ao padrão e libera edição
+      impostoInput.disabled = false;
+      impostoInput.value = impostoDefault;
+    }
+
     // LOGIN
     function verificarSenha() {
       const input = document.getElementById('senhaInput').value;
@@ -295,6 +348,7 @@
     function mostrarApp() {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app-screen').style.display = 'block';
+      aplicarRegraImpostoCPF();
     }
 
     function logout() {
@@ -303,28 +357,6 @@
       document.getElementById('login-screen').style.display = 'block';
       document.getElementById('senhaInput').value = '';
     }
-
-    // EVENTOS INICIAIS
-    document.addEventListener('DOMContentLoaded', function () {
-      if (localStorage.getItem('calculadoraProLogado') === 'true') {
-        mostrarApp();
-      }
-
-      const senhaInput = document.getElementById('senhaInput');
-      const btnEntrar = document.getElementById('btnEntrar');
-      const btnCalcular = document.getElementById('btnCalcular');
-      const btnSair = document.getElementById('btnSair');
-
-      if (senhaInput) {
-        senhaInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') verificarSenha();
-        });
-      }
-
-      if (btnEntrar) btnEntrar.addEventListener('click', verificarSenha);
-      if (btnCalcular) btnCalcular.addEventListener('click', calcular);
-      if (btnSair) btnSair.addEventListener('click', logout);
-    });
 
     // SELEÇÃO DE MARKETPLACE
     function selecionarMarketplace(market) {
@@ -341,6 +373,8 @@
       const opAtivo = document.getElementById('opcoes-' + market);
       if (btnAtivo) btnAtivo.classList.add('active');
       if (opAtivo) opAtivo.style.display = 'block';
+
+      aplicarRegraImpostoCPF();
     }
 
     // CÁLCULO DETALHADO
@@ -376,8 +410,14 @@
         if (tipo === 'cpf') impostoPercent = 0;
       } else if (mkt === 'ml') {
         const tipoML = document.querySelector('input[name="tipoML"]:checked').value;
+        const tipoMLConta = document.querySelector('input[name="tipoMLConta"]:checked')?.value || 'cnpj';
+
         taxaMktPercent = (tipoML === 'classico') ? 13 : 18;
-        descricaoMkt = `Mercado Livre ${tipoML === 'classico' ? 'Clássico' : 'Premium'}`;
+        descricaoMkt = `Mercado Livre ${tipoML === 'classico' ? 'Clássico' : 'Premium'} (${tipoMLConta.toUpperCase()})`;
+
+        if (tipoMLConta === 'cpf') {
+          impostoPercent = 0;
+        }
       } else if (mkt === 'tiktok') {
         taxaMktPercent = 6;
         descricaoMkt = "TikTok Shop";
@@ -444,6 +484,43 @@
         </p>
       `;
     }
+
+    // EVENTOS INICIAIS
+    document.addEventListener('DOMContentLoaded', function () {
+      if (localStorage.getItem('calculadoraProLogado') === 'true') {
+        mostrarApp();
+      }
+
+      const senhaInput = document.getElementById('senhaInput');
+      const btnEntrar = document.getElementById('btnEntrar');
+      const btnCalcular = document.getElementById('btnCalcular');
+      const btnSair = document.getElementById('btnSair');
+      const impostoInput = document.getElementById('imposto');
+
+      if (impostoInput) {
+        impostoDefault = parseFloat(impostoInput.value) || 6;
+      }
+
+      if (senhaInput) {
+        senhaInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') verificarSenha();
+        });
+      }
+
+      if (btnEntrar) btnEntrar.addEventListener('click', verificarSenha);
+      if (btnCalcular) btnCalcular.addEventListener('click', calcular);
+      if (btnSair) btnSair.addEventListener('click', logout);
+
+      // Quando muda tipo Shopee, reaplicar regra de imposto
+      document.querySelectorAll('input[name="tipoShopee"]').forEach(r => {
+        r.addEventListener('change', aplicarRegraImpostoCPF);
+      });
+
+      // Quando muda tipo conta Mercado Livre, reaplicar regra de imposto
+      document.querySelectorAll('input[name="tipoMLConta"]').forEach(r => {
+        r.addEventListener('change', aplicarRegraImpostoCPF);
+      });
+    });
   </script>
 </body>
 </html>
