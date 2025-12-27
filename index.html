@@ -304,7 +304,9 @@
       if (input === SENHA_MESTRE) {
         localStorage.setItem('calculadoraProLogado', 'true');
         mostrarApp();
-      } else { alert("Senha incorreta!"); }
+      } else { 
+        alert("Senha incorreta!"); 
+      }
     }
 
     function mostrarApp() {
@@ -315,17 +317,23 @@
 
     function logout() {
       localStorage.removeItem('calculadoraProLogado');
-      location.reload();
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'block';
+      document.getElementById('senhaInput').value = '';
     }
 
     function selecionarMarketplace(market) {
       document.getElementById('mkt').value = market;
       ['shopee','ml','tiktok','amazon'].forEach(m => {
-        document.getElementById('btn-' + m)?.classList.remove('active');
-        document.getElementById('opcoes-' + m).style.display = 'none';
+        const btn = document.getElementById('btn-' + m);
+        const op = document.getElementById('opcoes-' + m);
+        if (btn) btn.classList.remove('active');
+        if (op) op.style.display = 'none';
       });
-      document.getElementById('btn-' + market).classList.add('active');
-      document.getElementById('opcoes-' + market).style.display = 'block';
+      const btnAtivo = document.getElementById('btn-' + market);
+      const opAtivo = document.getElementById('opcoes-' + market);
+      if (btnAtivo) btnAtivo.classList.add('active');
+      if (opAtivo) opAtivo.style.display = 'block';
       aplicarRegraImpostoCPF();
     }
 
@@ -336,7 +344,10 @@
       let impostoPercent = (parseFloat(document.getElementById('imposto').value) || 0);
       const lucroPercent = (parseFloat(document.getElementById('lucro').value) || 0);
 
-      if (custoBase <= 0) { alert("Informe o custo do produto."); return; }
+      if (custoBase <= 0) { 
+        alert("Informe o custo do produto."); 
+        return; 
+      }
 
       let custoLogisticoAmazon = 0;
       let tipoAmazonSelecionado = "";
@@ -353,11 +364,13 @@
         const tipo = document.querySelector('input[name="tipoShopee"]:checked').value;
         taxaMktPercent = (tipo === 'cnpj') ? 20 : 21;
         descricaoMkt = `Shopee ${tipo.toUpperCase()}`;
+        if (tipo === 'cpf') impostoPercent = 0;
       } else if (mkt === 'ml') {
         const tipoML = document.querySelector('input[name="tipoML"]:checked').value;
         const tipoMLConta = document.querySelector('input[name="tipoMLConta"]:checked').value;
         taxaMktPercent = (tipoML === 'classico') ? 13 : 18;
         descricaoMkt = `ML ${tipoML.toUpperCase()} (${tipoMLConta.toUpperCase()})`;
+        if (tipoMLConta === 'cpf') impostoPercent = 0;
       } else if (mkt === 'tiktok') {
         taxaMktPercent = 6;
         descricaoMkt = "TikTok Shop";
@@ -389,8 +402,10 @@
       res.innerHTML = `
         <div class="res-item"><strong>Custo Produto:</strong><span>R$ ${custoBase.toFixed(2)}</span></div>
         <div class="res-item"><strong>Frete / Coleta:</strong><span>R$ ${frete.toFixed(2)}</span></div>
+        ${mkt === 'amazon' ? `<div class="res-item"><strong>Logística Amazon (${tipoAmazonSelecionado.toUpperCase()}):</strong><span>R$ ${custoLogisticoAmazon.toFixed(2)}</span></div>` : ''}
         ${tarifaFixaML > 0 ? `<div class="res-item"><strong>Tarifa Fixa ML:</strong><span>R$ ${tarifaFixaML.toFixed(2)}</span></div>` : ''}
-        <div class="res-item"><strong>Taxa Mkt (${taxaMktPercent}%):</strong><span>R$ ${taxaMktValor.toFixed(2)}</span></div>
+        <div class="res-item"><strong>Custo Total:</strong><span>R$ ${custoTotal.toFixed(2)}</span></div>
+        <div class="res-item"><strong>Taxa Mkt (${taxaMktPercent}% - ${descricaoMkt}):</strong><span>R$ ${taxaMktValor.toFixed(2)}</span></div>
         <div class="res-item"><strong>Impostos (${impostoPercent}%):</strong><span>R$ ${impostoValor.toFixed(2)}</span></div>
         <div class="res-item"><strong>Lucro (${lucroPercent}%):</strong><span>R$ ${lucroValor.toFixed(2)}</span></div>
         <div class="res-item total"><span>Preço Ideal:</span><span>R$ ${precoIdeal.toFixed(2)}</span></div>
@@ -398,12 +413,33 @@
       `;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('calculadoraProLogado') === 'true') mostrarApp();
-      document.getElementById('btnEntrar').onclick = verificarSenha;
-      document.getElementById('btnCalcular').onclick = calcular;
-      document.getElementById('btnSair').onclick = logout;
-      document.querySelectorAll('input[name="tipoShopee"], input[name="tipoMLConta"]').forEach(r => r.onchange = aplicarRegraImpostoCPF);
+    document.addEventListener('DOMContentLoaded', function() {
+      const senhaInput = document.getElementById('senhaInput');
+      const btnEntrar = document.getElementById('btnEntrar');
+      const btnCalcular = document.getElementById('btnCalcular');
+      const btnSair = document.getElementById('btnSair');
+
+      if (localStorage.getItem('calculadoraProLogado') === 'true') {
+        mostrarApp();
+      }
+
+      if (senhaInput) {
+        senhaInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') verificarSenha();
+        });
+      }
+
+      if (btnEntrar) btnEntrar.addEventListener('click', verificarSenha);
+      if (btnCalcular) btnCalcular.addEventListener('click', calcular);
+      if (btnSair) btnSair.addEventListener('click', logout);
+
+      document.querySelectorAll('input[name="tipoShopee"]').forEach(r => {
+        r.addEventListener('change', aplicarRegraImpostoCPF);
+      });
+
+      document.querySelectorAll('input[name="tipoMLConta"]').forEach(r => {
+        r.addEventListener('change', aplicarRegraImpostoCPF);
+      });
     });
   </script>
 </body>
