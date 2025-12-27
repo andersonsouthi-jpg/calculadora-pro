@@ -171,24 +171,24 @@
 
     <h2>Calculadora PRO de Precificação para Marketplaces</h2>
     <p style="font-size:0.85rem;color:#555;margin-top:4px;margin-bottom:10px;">
-      Ferramenta exclusiva para lojistas que vendem na <strong>Shopee</strong>, <strong>Mercado Livre</strong> e <strong>TikTok Shop</strong>. 
+      Ferramenta exclusiva para lojistas que vendem na <strong>Shopee</strong>, <strong>Mercado Livre</strong>, <strong>TikTok Shop</strong> e <strong>Amazon</strong>. 
     </p>
 
     <label>Selecione o Marketplace</label>
     <div class="market-group">
-      <div class="market-option active" id="btn-shopee" onclick="selecionarMarketplace('shopee')">
+      <div class="market-option active" id="btn-shopee" onclick="selecionarMarketplace('shopee', true)">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/240px-Shopee_logo.svg.png" alt="Shopee">
         <span>Shopee</span>
       </div>
-      <div class="market-option" id="btn-ml" onclick="selecionarMarketplace('ml')">
+      <div class="market-option" id="btn-ml" onclick="selecionarMarketplace('ml', true)">
         <img src="https://logospng.org/download/mercado-livre/logo-mercado-livre-4096.png" alt="Mercado Livre">
         <span>Mercado Livre</span>
       </div>
-      <div class="market-option" id="btn-tiktok" onclick="selecionarMarketplace('tiktok')">
+      <div class="market-option" id="btn-tiktok" onclick="selecionarMarketplace('tiktok', true)">
         <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok Shop">
         <span>TikTok Shop</span>
       </div>
-      <div class="market-option" id="btn-amazon" onclick="selecionarMarketplace('amazon')">
+      <div class="market-option" id="btn-amazon" onclick="selecionarMarketplace('amazon', true)">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon">
         <span>Amazon</span>
       </div>
@@ -202,7 +202,25 @@
         <label><input type="radio" name="tipoShopee" value="cnpj" checked> CNPJ</label>
         <label><input type="radio" name="tipoShopee" value="cpf"> CPF</label>
       </div>
-      <div class="tag-tax">Taxas aprox.: CNPJ ~20% | CPF ~21% (Frete Grátis)</div>
+
+      <label>Programa Frete Grátis Shopee</label>
+      <div class="radio-group">
+        <label><input type="radio" name="shopeeFreteGratis" value="sim" checked> Sim (participa)</label>
+        <label><input type="radio" name="shopeeFreteGratis" value="nao"> Não participo</label>
+      </div>
+
+      <div class="tag-tax">
+        Comissão 12% + taxa de transação 2% + (opcional) 6% Frete Grátis = até ~20% sobre o valor do produto.
+      </div>
+      <div class="info-box">
+        <strong>Tarifas Shopee (por item vendido):</strong><br>
+        • Comissão: 12% do valor do produto<br>
+        • Taxa de transação: 2% do valor do produto<br>
+        • Taxa de transporte (Frete Grátis): +6% se você participar do programa<br>
+        • Taxa fixa: R$ 4 por item (regra padrão).<br>
+        • Exceção: produtos &lt; R$ 8 → taxa fixa = 50% do valor do produto.<br>
+        <em>A calculadora considera automaticamente a taxa fixa de R$ 4 (ou 50% se o preço ficar abaixo de R$ 8).</em>
+      </div>
     </div>
 
     <!-- Mercado Livre -->
@@ -257,11 +275,13 @@
     <input type="number" id="frete" value="0" step="0.01">
 
     <label>Seu Imposto (%)</label>
-    <input type="number" id="imposto" value="6" step="0.1">
+    <!-- Agora começa em 0 -->
+    <input type="number" id="imposto" value="0" step="0.1">
     <div id="imposto-note" class="imposto-note"></div>
 
     <label>Margem de Lucro (%)</label>
-    <input type="number" id="lucro" value="30" step="0.1">
+    <!-- Agora começa em 0 -->
+    <input type="number" id="lucro" value="0" step="0.1">
 
     <button id="btnCalcular">CALCULAR PREÇOS</button>
     <div id="resultado" class="res"></div>
@@ -276,7 +296,7 @@
 
   <script>
     const SENHA_MESTRE = "123456"; 
-    let impostoDefault = 6;
+    let impostoDefault = 0; // agora padrão é 0
 
     function aplicarRegraImpostoCPF() {
       const impostoInput = document.getElementById('imposto');
@@ -296,7 +316,10 @@
       }
 
       impostoInput.disabled = false;
-      impostoInput.value = impostoDefault;
+      // mantém o valor atual que o usuário tiver digitado
+      if (impostoInput.value === "" || impostoInput.value === null) {
+        impostoInput.value = impostoDefault;
+      }
     }
 
     function verificarSenha() {
@@ -322,7 +345,8 @@
       document.getElementById('senhaInput').value = '';
     }
 
-    function selecionarMarketplace(market) {
+    // autoCalcular: se true, troca o marketplace e já chama calcular()
+    function selecionarMarketplace(market, autoCalcular = false) {
       document.getElementById('mkt').value = market;
       ['shopee','ml','tiktok','amazon'].forEach(m => {
         const btn = document.getElementById('btn-' + m);
@@ -335,6 +359,12 @@
       if (btnAtivo) btnAtivo.classList.add('active');
       if (opAtivo) opAtivo.style.display = 'block';
       aplicarRegraImpostoCPF();
+
+      // se já tiver custo preenchido, recalcula automaticamente ao trocar de marketplace
+      const custoBase = parseFloat(document.getElementById('custo').value) || 0;
+      if (autoCalcular && custoBase > 0) {
+        calcular();
+      }
     }
 
     function calcular() {
@@ -359,11 +389,19 @@
       let taxaMktPercent = 0;
       let descricaoMkt = "";
       let tarifaFixaML = 0;
+      let tarifaFixaShopee = 0;
 
       if (mkt === 'shopee') {
         const tipo = document.querySelector('input[name="tipoShopee"]:checked').value;
-        taxaMktPercent = (tipo === 'cnpj') ? 20 : 21;
-        descricaoMkt = `Shopee ${tipo.toUpperCase()}`;
+        const participaFreteGratis = document.querySelector('input[name="shopeeFreteGratis"]:checked').value === 'sim';
+
+        const comissao = 12;
+        const transacao = 2;
+        const freteGratisPercent = participaFreteGratis ? 6 : 0;
+
+        taxaMktPercent = comissao + transacao + freteGratisPercent; // até 20%
+        descricaoMkt = `Shopee ${tipo.toUpperCase()} ${participaFreteGratis ? '(c/ Frete Grátis)' : '(s/ Frete Grátis)'}`;
+
         if (tipo === 'cpf') impostoPercent = 0;
       } else if (mkt === 'ml') {
         const tipoML = document.querySelector('input[name="tipoML"]:checked').value;
@@ -380,6 +418,19 @@
       }
 
       let custoTotal = custoBase + frete + custoLogisticoAmazon;
+
+      // Tarifa fixa Shopee
+      if (mkt === 'shopee') {
+        let precoProv = custoTotal / (1 - (taxaMktPercent + impostoPercent + lucroPercent) / 100);
+
+        if (precoProv < 8) {
+          tarifaFixaShopee = precoProv * 0.5; // produtos < R$ 8
+        } else {
+          tarifaFixaShopee = 4; // padrão
+        }
+
+        custoTotal += tarifaFixaShopee;
+      }
 
       // Lógica Tarifa Fixa ML
       if (mkt === 'ml') {
@@ -403,13 +454,17 @@
         <div class="res-item"><strong>Custo Produto:</strong><span>R$ ${custoBase.toFixed(2)}</span></div>
         <div class="res-item"><strong>Frete / Coleta:</strong><span>R$ ${frete.toFixed(2)}</span></div>
         ${mkt === 'amazon' ? `<div class="res-item"><strong>Logística Amazon (${tipoAmazonSelecionado.toUpperCase()}):</strong><span>R$ ${custoLogisticoAmazon.toFixed(2)}</span></div>` : ''}
+        ${tarifaFixaShopee > 0 ? `<div class="res-item"><strong>Tarifa Fixa Shopee:</strong><span>R$ ${tarifaFixaShopee.toFixed(2)}</span></div>` : ''}
         ${tarifaFixaML > 0 ? `<div class="res-item"><strong>Tarifa Fixa ML:</strong><span>R$ ${tarifaFixaML.toFixed(2)}</span></div>` : ''}
         <div class="res-item"><strong>Custo Total:</strong><span>R$ ${custoTotal.toFixed(2)}</span></div>
         <div class="res-item"><strong>Taxa Mkt (${taxaMktPercent}% - ${descricaoMkt}):</strong><span>R$ ${taxaMktValor.toFixed(2)}</span></div>
         <div class="res-item"><strong>Impostos (${impostoPercent}%):</strong><span>R$ ${impostoValor.toFixed(2)}</span></div>
         <div class="res-item"><strong>Lucro (${lucroPercent}%):</strong><span>R$ ${lucroValor.toFixed(2)}</span></div>
         <div class="res-item total"><span>Preço Ideal:</span><span>R$ ${precoIdeal.toFixed(2)}</span></div>
-        <div class="total" style="color:#2ecc71;"><span>Preço Promo (+20%):</span><span>R$ ${precoPromo.toFixed(2)}</span></div>
+        <div class="total" style="color:#2ecc71;">
+          <span>Preço sugerido para promoções (+20%):</span>
+          <span>R$ ${precoPromo.toFixed(2)}</span>
+        </div>
       `;
     }
 
@@ -434,11 +489,41 @@
       if (btnSair) btnSair.addEventListener('click', logout);
 
       document.querySelectorAll('input[name="tipoShopee"]').forEach(r => {
-        r.addEventListener('change', aplicarRegraImpostoCPF);
+        r.addEventListener('change', () => {
+          aplicarRegraImpostoCPF();
+          // se já tiver custo, recalcula
+          const custoBase = parseFloat(document.getElementById('custo').value) || 0;
+          if (custoBase > 0) calcular();
+        });
+      });
+
+      document.querySelectorAll('input[name="shopeeFreteGratis"]').forEach(r => {
+        r.addEventListener('change', () => {
+          const custoBase = parseFloat(document.getElementById('custo').value) || 0;
+          if (custoBase > 0) calcular();
+        });
       });
 
       document.querySelectorAll('input[name="tipoMLConta"]').forEach(r => {
-        r.addEventListener('change', aplicarRegraImpostoCPF);
+        r.addEventListener('change', () => {
+          aplicarRegraImpostoCPF();
+          const custoBase = parseFloat(document.getElementById('custo').value) || 0;
+          if (custoBase > 0) calcular();
+        });
+      });
+
+      document.querySelectorAll('input[name="tipoML"]').forEach(r => {
+        r.addEventListener('change', () => {
+          const custoBase = parseFloat(document.getElementById('custo').value) || 0;
+          if (custoBase > 0) calcular();
+        });
+      });
+
+      document.querySelectorAll('input[name="tipoAmazon"]').forEach(r => {
+        r.addEventListener('change', () => {
+          const custoBase = parseFloat(document.getElementById('custo').value) || 0;
+          if (custoBase > 0) calcular();
+        });
       });
     });
   </script>
